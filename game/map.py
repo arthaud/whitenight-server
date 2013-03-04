@@ -1,14 +1,14 @@
 from array import Array, Point
 
 class Unit():
-    def __init__(self, team):
+    def __init__(self, team, gold=0):
         self.team = team
-        self.gold = 0
+        self.gold = gold
 
 class Base():
-    def __init__(self, team):
+    def __init__(self, team, gold=0):
         self.team = team
-        self.gold = 0
+        self.gold = gold
 
 class Mine():
     pass

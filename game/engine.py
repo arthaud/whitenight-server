@@ -35,6 +35,25 @@ class Game():
                 'units': units,
                }
 
+
+    def set_state(self, state):
+        """ Update the map with an object we get from get_state """
+
+        # Reset map
+        for pos in self.map.units.keys():
+            self.map.units[pos] = None
+            self.map.ground[pos] = None
+
+        for mine in state['mines']:
+            self.map.ground[mine['pos']] = Mine()
+
+        for base in state['bases']:
+            self.map.ground[base['pos']] = Base(team=base['team'], gold=base['gold'])
+
+        for unit in state['units']:
+            self.map.units[unit['pos']] = Unit(team=unit['team'], gold=unit['gold'])
+
+
     def play_turn(self, player, actions):
         """ 
             Change the state of the game for a player.
@@ -63,6 +82,8 @@ class Game():
 
                 base.gold -= 1
                 self.map.units[action['pos']] = Unit(player)
+
+                units_moved.add(self.map.units[action['pos']])
 
         self._transfer_gold()
 
