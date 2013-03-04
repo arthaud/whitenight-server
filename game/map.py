@@ -54,7 +54,7 @@ class Map():
 
     def range(self, point, moves):
         """ Return a list of points from which we can go from the given point, in the given number of moves """
-        r = {}
+        r = set()
         for y in range(point[1] - moves, point[1] + moves + 1):
             d = moves - abs(point[1] - y)
             r.update(Point(x, y) for x in range(point[0] - d, point[0] + d + 1) if self.ground.in_bounds((x,y)))

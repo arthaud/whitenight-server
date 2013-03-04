@@ -9,7 +9,7 @@ class Game():
 
 
     def get_teams(self):
-        teams = {}
+        teams = set()
         for pos, building in self.map.iter_buildings():
             if hasattr(building, 'team'):
                 teams.add(building.team)
@@ -62,15 +62,16 @@ class Game():
             Actions is a python object containing the actions.
             Can raise an exception if something is wrong.
         """
-        units_moved = {}
+        units_moved = set()
 
         for action in actions:
             if action['type'] == 'move':
                 square_from = self.map.units[action['from']]
 
-                assert square_from.team == team
-                assert Point(action['to'][0], action['to'][1]) in self.map.range(action['from'], UNIT_RANGE)
-                assert square_from not in units_moved
+                assert square_from, 'invalid field : from'
+                assert square_from.team == team, 'you cannot move an ennemy'
+                assert Point(action['to'][0], action['to'][1]) in self.map.range(action['from'], UNIT_RANGE), 'invalid field : to'
+                assert square_from not in units_moved, 'this unit has already moved'
 
                 units_moved.add(square_from)
                 self.map.units[action['to']] = square_from
@@ -78,8 +79,9 @@ class Game():
 
             elif action['type'] == 'create':
                 base = self.map.ground[action['pos']]
-                assert base.team == team
-                assert base.gold > 0
+                assert base, 'invalid field : pos'
+                assert base.team == team, 'you cannot create an ennemy'
+                assert base.gold > 0, 'you do not have enough gold'
 
                 base.gold -= 1
                 self.map.units[action['pos']] = Unit(team)
@@ -91,7 +93,7 @@ class Game():
     
     def winner(self):
         """ Return the ID of the winner, or None if the game is not finished """
-        players_still_alive = {}
+        players_still_alive = set()
         for pos, unit in self.map.iter_units():
             players_still_alive.add(unit.team)
 
