@@ -3,15 +3,17 @@ from map import *
 UNIT_RANGE = 3
 
 class Game():
-    def __init__(self, map_file, players):
-        """ Start a game, using the map file passed as a parameter, and a list of player ID """
-        self.map = Map(map_file)
+    def __init__(self, map_):
+        """ Start a game, using the map file passed as a parameter """
+        self.map = Map(map_)
 
+
+    def get_teams(self):
         teams = {}
         for pos, building in self.map.iter_buildings():
             if hasattr(building, 'team'):
                 teams.add(building.team)
-        assert teams == set(players)
+        return teams
 
 
     def get_state(self):
@@ -54,10 +56,9 @@ class Game():
             self.map.units[unit['pos']] = Unit(team=unit['team'], gold=unit['gold'])
 
 
-    def play_turn(self, player, actions):
+    def play_turn(self, team, actions):
         """ 
-            Change the state of the game for a player.
-            Player is a player ID.
+            Change the state of the game for a team.
             Actions is a python object containing the actions.
             Can raise an exception if something is wrong.
         """
@@ -67,7 +68,7 @@ class Game():
             if action['type'] == 'move':
                 square_from = self.map.units[action['from']]
 
-                assert square_from.team == player
+                assert square_from.team == team
                 assert Point(action['to'][0], action['to'][1]) in self.map.range(action['from'], UNIT_RANGE)
                 assert square_from not in units_moved
 
@@ -77,11 +78,11 @@ class Game():
 
             elif action['type'] == 'create':
                 base = self.map.ground[action['pos']]
-                assert base.team == player
+                assert base.team == team
                 assert base.gold > 0
 
                 base.gold -= 1
-                self.map.units[action['pos']] = Unit(player)
+                self.map.units[action['pos']] = Unit(team)
 
                 units_moved.add(self.map.units[action['pos']])
 
