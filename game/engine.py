@@ -9,7 +9,7 @@ class Game():
 
 
     def get_teams(self):
-        teams = {}
+        teams = set()
         for pos, building in self.map.iter_buildings():
             if hasattr(building, 'team'):
                 teams.add(building.team)
