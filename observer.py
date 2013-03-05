@@ -15,7 +15,6 @@ pygame.mouse.set_visible(0)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
-s.setblocking(0)
 
 s.sendall(json.dumps(
     {'type': 'observer'}

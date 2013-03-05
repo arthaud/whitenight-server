@@ -4,12 +4,13 @@ import socket
 import select
 from collections import namedtuple
 from game import Game, Map
+import json
 
 class Player(namedtuple('Player', 'socket, id, name')):
     pass
 
 def send_json(socket, obj):
-    socket.send(json.dumps(obj) + '\n')
+    socket.send(bytes(json.dumps(obj) + '\n', 'utf-8'))
 
 class Server():
     def __init__(self, host, port, map_file):
@@ -28,21 +29,19 @@ class Server():
 
         while unconnected_players:
             client, address = self.server.accept()
-            data = client.recv(4096)
+            data = client.makefile().readline()
             if data:
-                try:
-                    conn_message = json.loads(data.strip())
+                conn_message = json.loads(str(data))
 
-                    if conn_message['type'] == 'player':
-                        raise 'name' in conn_message
-                        pid = unconnected_players.pop()
-                        self.players[pid] = Player(client, pid, conn_message['name'])
-                    elif conn_message['type'] == 'observer':
-                        self.observers.append(client)
+                if conn_message['type'] == 'player':
+                    pid = unconnected_players.pop()
+                    self.players[pid] = Player(client, pid, conn_message['name'])
 
-                    send_json(client, True)
-                except:
-                    client.close()
+                elif conn_message['type'] == 'observer':
+                    self.observers.append(client)
+
+                send_json(client, True)
+
             else:
                 client.close()
 
@@ -63,7 +62,7 @@ class Server():
             while teams and not game.winner():
                 pid = teams.pop()
                 send_json(self.players[pid], game.get_state())
-                data = self.players[pid].recv(4096)
+                data = self.players[pid].makefile().readline()
 
                 if data:
                     try:
@@ -85,7 +84,7 @@ class Server():
 
                 for socket in self.observers:
                     send_json(socket, game.get_state())
-                    data = self.server.recv(4096)
+                    data = self.server.makefile().readline()
                     assert data.strip() == json.dumps(True)
 
         for socket, _, _ in self.players:
