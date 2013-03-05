@@ -6,15 +6,22 @@ class Unit():
         self.team = team
         self.gold = gold
 
+    def __repr__(self):
+        return "%s(%s, %s)" % (self.__class__.__name__, self.team, self.gold)
+
 
 class Base():
     def __init__(self, team, gold=0):
         self.team = team
         self.gold = gold
 
+    def __repr__(self):
+        return "%s(%s, %s)" % (self.__class__.__name__, self.team, self.gold)
+
 
 class Mine():
-    pass
+    def __repr__(self):
+        return "%s()" % (self.__class__.__name__,)
 
 
 class Map():
@@ -50,6 +57,19 @@ class Map():
         for key, item in self.ground.items():
             if item is not None:
                 yield (key, item)
+
+
+    def keys(self):
+        return self.ground.keys()
+
+
+    @property
+    def width(self):
+        return self.ground.width
+
+    @property
+    def height(self):
+        return self.ground.height
 
 
     def range(self, point, moves):
