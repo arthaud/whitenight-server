@@ -13,8 +13,7 @@ def send_json(socket, obj):
 
 class Server():
     def __init__(self, host, port, map_file):
-        self.map_ = Map(map_file)
-        self.game = Game(self.map_)
+        self.game = Game(map_file)
 
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
