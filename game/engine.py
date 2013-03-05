@@ -7,6 +7,10 @@ class Game():
         """ Start a game, using the map file passed as a parameter """
         self.map = map_
 
+        for pos in self.map.keys():
+            if isinstance(self.map.ground[pos], Base):
+                self.map.units[pos] = Unit(team=self.map.ground[pos].team)
+
 
     def get_teams(self):
         teams = set()
