@@ -31,5 +31,5 @@ class Array():
 
     def items(self):
         for key in self.keys():
-            return (key, self[key])
+            yield (key, self[key])
 
