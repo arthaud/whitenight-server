@@ -46,7 +46,7 @@ class Server():
                 client.close()
 
         # initialize 
-        for socket, pid, _  in self.players:
+        for socket, pid, _ in self.players:
             send_json(socket, {
                 'id': pid,
                 'players': { id: name for _, id, name in self.players },
