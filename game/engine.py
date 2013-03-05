@@ -5,7 +5,7 @@ UNIT_RANGE = 3
 class Game():
     def __init__(self, map_):
         """ Start a game, using the map file passed as a parameter """
-        self.map = Map(map_)
+        self.map = map_
 
 
     def get_teams(self):
