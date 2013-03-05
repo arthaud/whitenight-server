@@ -1,5 +1,8 @@
 from .array import Array, Point
 
+class Building():
+    pass
+
 
 class Unit():
     def __init__(self, team, gold=0):
@@ -10,7 +13,7 @@ class Unit():
         return "%s(%s, %s)" % (self.__class__.__name__, self.team, self.gold)
 
 
-class Base():
+class Base(Building):
     def __init__(self, team, gold=0):
         self.team = team
         self.gold = gold
@@ -19,7 +22,7 @@ class Base():
         return "%s(%s, %s)" % (self.__class__.__name__, self.team, self.gold)
 
 
-class Mine():
+class Mine(Building):
     def __repr__(self):
         return "%s()" % (self.__class__.__name__,)
 
