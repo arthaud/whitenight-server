@@ -1,4 +1,4 @@
 white-night-server
 ==================
 
-A server for the white night game.
+A server for the whitenight game.
