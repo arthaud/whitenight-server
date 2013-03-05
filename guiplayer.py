@@ -12,7 +12,6 @@ SIZE = (1200,800)
 pygame.init()
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption('Whitenight observer')
-pygame.mouse.set_visible(0)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
