@@ -7,7 +7,7 @@ import sys
 
 HOST = 'localhost'
 PORT = 1234
-SIZE = (500,500)
+SIZE = (1200,800)
 
 pygame.init()
 screen = pygame.display.set_mode(SIZE)
@@ -51,15 +51,14 @@ def loop():
 
                 text = repr(game.map.units[pos]) + repr(game.map.ground[pos])
                 
-                t = pygame.font.SysFont('nonexistent', 15).render(text, True, pygame.Color(0,0,0,0))
+                t = pygame.font.SysFont('nonexistent', 16).render(text, True, pygame.Color(0,0,0,0))
                 screen.blit(t, ((left + right) / 2, (top + bottom) / 2))
 
-
+            pygame.display.flip()
 
             result = json.loads(s.makefile().readline())
             if result:
                 game.set_state(result)
 
-            pygame.display.flip()
 
 loop()
