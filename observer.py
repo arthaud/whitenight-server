@@ -21,6 +21,7 @@ s.sendall(json.dumps(
     {'type': 'observer'}
 ) + '\n')
 
+assert json.loads(s.makefile().readline()) == True
 result = json.loads(s.makefile().readline())
 
 players = result['players']

@@ -1,1 +1,1 @@
-from engine import Game, Map
+from .engine import Game, Map

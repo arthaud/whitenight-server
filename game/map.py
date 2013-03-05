@@ -1,4 +1,4 @@
-from array import Array, Point
+from .array import Array, Point
 
 
 class Unit():

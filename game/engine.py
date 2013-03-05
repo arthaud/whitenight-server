@@ -1,4 +1,4 @@
-from map import *
+from .map import *
 
 UNIT_RANGE = 3
 
