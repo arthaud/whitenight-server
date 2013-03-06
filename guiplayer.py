@@ -5,6 +5,7 @@ from game.map import Base
 import socket
 import json
 import sys
+from copy import deepcopy
 
 HOST = 'localhost'
 PORT = 4321
@@ -32,6 +33,8 @@ print(players)
 game = Game(Map(size=map_size))
 
 def loop():
+    global game
+
     socketWait = True
     clickedPos = None
     commands = []
@@ -42,8 +45,15 @@ def loop():
             if event.type == pygame.QUIT:
                 return
             elif event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_SPACE]:
-                s.send(json.dumps(commands) + '\n')
-                socketWait = True
+                old_game = deepcopy(game)
+                try:
+                    game.set_state(commands)
+                except:
+                    print('Error : invalid commands')
+                    game = old_game
+                else:
+                    s.send(json.dumps(commands) + '\n')
+                    socketWait = True
                 commands = []
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
                 x = int(pygame.mouse.get_pos()[0] * game.map.width / SIZE[0])
