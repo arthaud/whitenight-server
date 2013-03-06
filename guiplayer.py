@@ -12,12 +12,12 @@ PORT = 4321
 SIZE = (1200,800)
 USERNAME = sys.argv[1]
 
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((HOST, PORT))
+
 pygame.init()
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption('Whitenight observer')
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
 
 s.sendall(json.dumps({
     'type': 'player',

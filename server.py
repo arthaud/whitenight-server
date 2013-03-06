@@ -35,13 +35,16 @@ class Server():
             try:
                 conn_message = recv_json(client)
                 if conn_message['type'] == 'player':
-                    assert 'name' in conn_message, 'undefied key name'
+                    assert 'name' in conn_message, 'undefined key name'
 
                     pid = unconnected_players.pop()
                     self.players[pid] = Player(client, conn_message['name'])
 
+                    print('Client connected : %s' % conn_message['name'])
+
                 elif conn_message['type'] == 'observer':
                     self.observers.append(client)
+                    print('Observer connected')
 
                 send_json(client, True)
             except Exception as ex:
@@ -90,3 +93,4 @@ class Server():
         for socket in self.observers:
             socket.close()
         self.server.close()
+
