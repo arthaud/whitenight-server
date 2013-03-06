@@ -13,13 +13,7 @@ def send_json(socket, obj):
 
 def recv_json(socket):
     data = socket.makefile().readline()
-    if data:
-        try:
-            return json.loads(data.strip())
-        except ValueError:
-            print('invalid json')
-            send_json(socket, { 'error': 'invalid json', })
-    return None
+    return json.loads(data.strip())
 
 class Server():
     def __init__(self, host, port, map_file):
@@ -30,17 +24,6 @@ class Server():
         self.server.bind((host, port))
         self.server.listen(5)
 
-    def catch_exception(self, socket, ex):
-        if isinstance(ex, KeyError):
-            print(ex)
-            send_json(socket, { 'error': 'undefined key %s' % ex, })
-        elif isinstance(ex, AssertionError):
-            print(ex)
-            send_json(socket, { 'error': str(ex), })
-        else:
-            send_json(socket, { 'error': 'unknow error', })
-            raise ex
-
     def run(self):
         # connection of players
         unconnected_players = self.game.get_teams()
@@ -49,23 +32,21 @@ class Server():
 
         while unconnected_players:
             client, address = self.server.accept()
-            conn_message = recv_json(client)
-            if conn_message is not None:
-                try:
-                    if conn_message['type'] == 'player':
-                        assert 'name' in conn_message, 'undefied key name'
+            try:
+                conn_message = recv_json(client)
+                if conn_message['type'] == 'player':
+                    assert 'name' in conn_message, 'undefied key name'
 
-                        pid = unconnected_players.pop()
-                        self.players[pid] = Player(client, conn_message['name'])
+                    pid = unconnected_players.pop()
+                    self.players[pid] = Player(client, conn_message['name'])
 
-                    elif conn_message['type'] == 'observer':
-                        self.observers.append(client)
+                elif conn_message['type'] == 'observer':
+                    self.observers.append(client)
 
-                    send_json(client, True)
-                except Exception as ex:
-                    self.catch_exception(client, ex)
-                    client.close()
-            else:
+                send_json(client, True)
+            except Exception as ex:
+                print(repr(ex))
+                send_json(client, { 'error': repr(ex), })
                 client.close()
 
         # initialize 
@@ -86,13 +67,15 @@ class Server():
             teams = list(self.players.keys())
             while teams and not self.game.winner():
                 pid = teams.pop()
-                send_json(self.players[pid].socket, self.game.get_state())
-                play_message = recv_json(self.players[pid].socket)
-                if play_message is not None:
-                    try:
-                        self.game.play_turn(pid, play_message)
-                    except Exception as ex:
-                        self.catch_exception(self.players[pid], ex)
+                socket = self.players[pid].socket
+
+                send_json(socket, self.game.get_state())
+                try:
+                    play_message = recv_json(socket)
+                    self.game.play_turn(pid, play_message)
+                except Exception as ex:
+                    print(repr(ex))
+                    send_json(socket, { 'error': repr(ex), })
 
                 # send turn to observers
                 for socket in self.observers:
