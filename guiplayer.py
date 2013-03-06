@@ -57,8 +57,7 @@ def loop():
                     elif isinstance(game.map.ground[x, y], Base):
                         commands.append({'type': 'create', 'pos': (x,y)})
 
-
-
+        
         screen.fill(pygame.Color(255,255,255,0))
 
         for pos in game.map.keys():
@@ -81,6 +80,13 @@ def loop():
             
             t = pygame.font.SysFont('nonexistent', 16).render(text, True, pygame.Color(0,0,0,0))
             screen.blit(t, (left + 2, (top + bottom) / 2))
+
+
+        headerText = '[waiting for your turn]' if socketWait else '[your turn]'
+        headerText += ' ' + repr(commands)
+        t = pygame.font.SysFont('nonexistent', 18).render(headerText, True, pygame.Color(0,0,0,0))
+        screen.blit(t, (0,0))
+
 
         pygame.display.flip()
 
