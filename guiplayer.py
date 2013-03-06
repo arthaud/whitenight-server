@@ -51,6 +51,7 @@ def loop():
                 if clickedPos:
                     if game.map.units[x, y] is None:
                         commands.append({'type': 'move', 'from': clickedPos, 'to': (x,y)})
+                    clickedPos = None
                 else:
                     if game.map.units[x, y] is not None:
                         clickedPos = (x, y)
