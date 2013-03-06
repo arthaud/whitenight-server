@@ -7,7 +7,7 @@ import json
 import sys
 
 HOST = 'localhost'
-PORT = 1234
+PORT = 4321
 SIZE = (1200,800)
 
 pygame.init()
