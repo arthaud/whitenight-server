@@ -10,6 +10,7 @@ from copy import deepcopy
 HOST = 'palkeo.com'
 PORT = 4321
 SIZE = (1200,800)
+USERNAME = sys.argv[1]
 
 pygame.init()
 screen = pygame.display.set_mode(SIZE)
@@ -20,7 +21,7 @@ s.connect((HOST, PORT))
 
 s.sendall(json.dumps({
     'type': 'player',
-    'name': sys.argv[1],
+    'name': USERNAME,
 }) + '\n')
 
 assert json.loads(s.makefile().readline()) == True
@@ -30,10 +31,16 @@ players = result['players']
 map_size = result['map_size']
 print(players)
 
+team = None
+for t, username in players.items():
+    if username == USERNAME:
+        team = int(t)
+assert team
+
 game = Game(Map(size=map_size))
 
 def loop():
-    global game
+    global game, team
 
     socketWait = True
     clickedPos = None
@@ -47,7 +54,7 @@ def loop():
             elif event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_SPACE]:
                 old_game = deepcopy(game)
                 try:
-                    game.set_state(commands)
+                    game.play_turn(team, commands)
                 except:
                     print('Error : invalid commands')
                     game = old_game
