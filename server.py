@@ -17,6 +17,7 @@ def recv_json(socket):
         try:
             return json.loads(data.strip())
         except ValueError:
+            print('invalid json')
             send_json(socket, { 'error': 'invalid json', })
     return None
 
@@ -31,9 +32,11 @@ class Server():
 
     def catch_exception(self, socket, ex):
         if isinstance(ex, KeyError):
-            send_json(socket, { 'error': 'undefined key %s' % key, })
+            print(ex)
+            send_json(socket, { 'error': 'undefined key %s' % ex, })
         elif isinstance(ex, AssertionError):
-            send_json(socket, { 'error': str(message), })
+            print(ex)
+            send_json(socket, { 'error': str(ex), })
         else:
             send_json(socket, { 'error': 'unknow error', })
             raise ex
@@ -47,7 +50,7 @@ class Server():
         while unconnected_players:
             client, address = self.server.accept()
             conn_message = recv_json(client)
-            if conn_message:
+            if conn_message is not None:
                 try:
                     if conn_message['type'] == 'player':
                         assert 'name' in conn_message, 'undefied key name'
@@ -85,7 +88,7 @@ class Server():
                 pid = teams.pop()
                 send_json(self.players[pid].socket, self.game.get_state())
                 play_message = recv_json(self.players[pid].socket)
-                if play_message:
+                if play_message is not None:
                     try:
                         self.game.play_turn(pid, play_message)
                     except Exception as ex:
