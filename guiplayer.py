@@ -66,8 +66,7 @@ def loop():
                 x = int(pygame.mouse.get_pos()[0] * game.map.width / SIZE[0])
                 y = int(pygame.mouse.get_pos()[1] * game.map.height / SIZE[1])
                 if clickedPos:
-                    if game.map.units[x, y] is None:
-                        commands.append({'type': 'move', 'from': clickedPos, 'to': (x,y)})
+                    commands.append({'type': 'move', 'from': clickedPos, 'to': (x,y)})
                     clickedPos = None
                 else:
                     if game.map.units[x, y] is not None:
