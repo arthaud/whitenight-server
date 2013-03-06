@@ -7,7 +7,7 @@ import json
 import sys
 from copy import deepcopy
 
-HOST = 'localhost'
+HOST = 'palkeo.com'
 PORT = 4321
 SIZE = (1200,800)
 
