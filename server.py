@@ -35,7 +35,7 @@ class Server():
         elif isinstance(ex, AssertionError):
             send_json(socket, { 'error': str(message), })
         else:
-            send_json(self.players[pid].socket, { 'error': 'unknow error', })
+            send_json(socket, { 'error': 'unknow error', })
             raise ex
 
     def run(self):
@@ -87,16 +87,19 @@ class Server():
                 play_message = recv_json(self.players[pid].socket)
                 if play_message:
                     try:
-                        play_message = json.loads(data.strip())
                         self.game.play_turn(pid, play_message)
                     except Exception as ex:
                         self.catch_exception(self.players[pid], ex)
 
+                # send turn to observers
                 for socket in self.observers:
                     send_json(socket, self.game.get_state())
+                # wait for observers
+                for socket in self.observers:
                     assert recv_json(socket)
 
-        for socket, _, _ in self.players:
+        # end of game
+        for socket, _ in self.players.values():
             socket.close()
         for socket in self.observers:
             socket.close()
