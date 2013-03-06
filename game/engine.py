@@ -4,12 +4,12 @@ UNIT_RANGE = 3
 
 class Game():
     def __init__(self, map_):
-        """ Start a game, using the map file passed as a parameter """
+        """ Start a game, using the map passed as a parameter """
         self.map = map_
 
-        for pos in self.map.keys():
-            if isinstance(self.map.ground[pos], Base):
-                self.map.units[pos] = Unit(team=self.map.ground[pos].team)
+        for pos, building in self.map.iter_buildings():
+            if isinstance(building, Base):
+                self.map.units[pos] = Unit(team=building.team)
 
 
     def get_teams(self):

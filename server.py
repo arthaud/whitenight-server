@@ -35,7 +35,7 @@ class Server():
             try:
                 conn_message = recv_json(client)
                 if conn_message['type'] == 'player':
-                    assert 'name' in conn_message, 'undefied key name'
+                    assert 'name' in conn_message, 'undefined key : name'
 
                     pid = unconnected_players.pop()
                     self.players[pid] = Player(client, conn_message['name'])
