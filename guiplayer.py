@@ -1,46 +1,46 @@
+#!/usr/bin/env python2
+# -*-coding:Utf-8 -*
 from __future__ import division
 import pygame
 from game import Game, Map
 from game.map import Base
 import socket
 import json
-import sys
+import argparse
 from copy import deepcopy
 
-HOST = 'palkeo.com'
-PORT = 4321
 SIZE = (1200,800)
-USERNAME = sys.argv[1]
+WINDOW_TITLE = 'Whitenight gui player'
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
+def send_json(socket, obj):
+    socket.sendall(json.dumps(obj) + '\n')
 
-pygame.init()
-screen = pygame.display.set_mode(SIZE)
-pygame.display.set_caption('Whitenight observer')
+def recv_json(socket):
+    data = socket.makefile().readline()
+    return json.loads(data.strip())
 
-s.sendall(json.dumps({
-    'type': 'player',
-    'name': USERNAME,
-}) + '\n')
+def run(host, port, username):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
 
-assert json.loads(s.makefile().readline()) == True
-result = json.loads(s.makefile().readline())
+    pygame.init()
+    screen = pygame.display.set_mode(SIZE)
+    pygame.display.set_caption(WINDOW_TITLE)
 
-players = result['players']
-map_size = result['map_size']
-print(players)
+    send_json(s, {
+        'type': 'player',
+        'name': username,
+    })
 
-team = None
-for t, username in players.items():
-    if username == USERNAME:
-        team = int(t)
-assert team
+    assert recv_json(s) == True
+    result = recv_json(s)
 
-game = Game(Map(size=map_size))
+    team = int(result['id'])
+    players = result['players']
+    map_size = result['map_size']
+    print(players)
 
-def loop():
-    global game, team
+    game = Game(Map(size=map_size))
 
     socketWait = True
     clickedPos = None
@@ -59,7 +59,7 @@ def loop():
                     print('Error : invalid commands')
                     game = old_game
                 else:
-                    s.send(json.dumps(commands) + '\n')
+                    send_json(s, commands)
                     socketWait = True
                 commands = []
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
@@ -110,9 +110,14 @@ def loop():
 
         if socketWait:
             socketWait = False
-            result = json.loads(s.makefile().readline())
+            result = recv_json(s)
             if result:
                 game.set_state(result)
 
-
-loop()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='A gui player for the whitnight game.')
+    parser.add_argument('host')
+    parser.add_argument('-p', '--port', default=4321, type=int)
+    parser.add_argument('username')
+    args = parser.parse_args()
+    run(args.host, args.port, args.username)

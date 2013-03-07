@@ -23,6 +23,7 @@ class Server():
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server.bind((host, port))
         self.server.listen(5)
+        print('server started on %s:%s' % (host, port))
 
     def run(self):
         # connection of players
@@ -85,7 +86,7 @@ class Server():
                     send_json(socket, self.game.get_state())
                 # wait for observers
                 for socket in self.observers:
-                    assert recv_json(socket)
+                    assert recv_json(socket) == True
 
         # end of game
         for socket, _ in self.players.values():
