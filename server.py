@@ -27,6 +27,7 @@ class Server():
 
     def run(self):
         # connection of players
+        print('waiting for players...')
         unconnected_players = self.game.get_teams()
         self.players = {}
         self.observers = []
@@ -54,6 +55,7 @@ class Server():
                 client.close()
 
         # initialize 
+        print('playing...')
         for pid, (socket, _) in self.players.items():
             send_json(socket, {
                 'id': pid,

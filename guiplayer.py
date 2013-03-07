@@ -33,7 +33,7 @@ def run(host, port, username):
     })
 
     assert recv_json(s) == True
-    print('Connected as %s on %s:%s' % (username, host, port))
+    print('Connected to %s:%s as %s' % (host, port, username))
 
     result = recv_json(s)
     team = int(result['id'])

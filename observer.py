@@ -29,7 +29,7 @@ def run(host, port):
     send_json(s, { 'type': 'observer' })
 
     assert recv_json(s) == True
-    print('Connected on %s:%s' % (host, port))
+    print('Connected to %s:%s' % (host, port))
 
     result = recv_json(s)
     players = result['players']
