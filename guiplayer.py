@@ -33,12 +33,12 @@ def run(host, port, username):
     })
 
     assert recv_json(s) == True
-    result = recv_json(s)
+    print('Connected as %s on %s:%s' % (username, host, port))
 
+    result = recv_json(s)
     team = int(result['id'])
     players = result['players']
     map_size = result['map_size']
-    print(players)
 
     game = Game(Map(size=map_size))
 
@@ -47,11 +47,10 @@ def run(host, port, username):
     commands = []
 
     while True:
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-            elif event.type == pygame.KEYDOWN and pygame.key.get_pressed()[pygame.K_SPACE]:
+            elif event.type == pygame.KEYDOWN and (pygame.key.get_pressed()[pygame.K_SPACE] or pygame.key.get_pressed()[pygame.K_RETURN]):
                 old_game = deepcopy(game)
                 try:
                     game.play_turn(team, commands)
