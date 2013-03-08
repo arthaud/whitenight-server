@@ -11,9 +11,9 @@ class Point(namedtuple('Point', 'x, y')):
 
 
 class Array():
-    def __init__(self, width, height):
+    def __init__(self, width, height, default=None):
         self.width, self.height = width, height
-        self.map = [[None]*height for _ in range(width)]
+        self.map = [[default]*height for _ in range(width)]
 
     def __getitem__(self, key):
         return self.map[key[0]][key[1]]
