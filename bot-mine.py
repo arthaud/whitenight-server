@@ -45,10 +45,6 @@ class Bot:
                             self.move_unit(from_, to)
                             break
 
-            # create units
-            if self.game.map.ground[self.base_pos].gold > 0 and not self.game.map.units[self.base_pos]:
-                self.create_unit()
-
             # move units
             for from_, unit in self.game.map.iter_units():
                 if unit.team == self.team_id and unit not in self.units_moved: # for each unit of my team
@@ -65,9 +61,13 @@ class Bot:
 
                     destinations = sorted(destinations, key=key)
                     for to in destinations:
-                        if not self.game.map.units[to]:
+                        if not self.game.map.units[to] and not(to == self.base_pos and self.base_gold() > 0):
                             self.move_unit(from_, to)
                             break
+
+            # create units
+            if self.base_gold() > 0 and not self.game.map.units[self.base_pos]:
+                self.create_unit()
 
             self.end_turn()
 
@@ -112,8 +112,7 @@ class Bot:
         self.units_moved.add(unit)
 
     def create_unit(self):
-        base = self.game.map.ground[self.base_pos]
-        assert base.gold > 0
+        assert self.base_gold() > 0
         assert not self.game.map.units[self.base_pos]
 
         command = {
@@ -123,6 +122,9 @@ class Bot:
         self.game.play_turn(self.team_id, [command])
         self.commands.append(command)
         self.units_moved.add(self.game.map.units[self.base_pos])
+
+    def base_gold(self):
+        return self.game.map.ground[self.base_pos].gold
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='A simple bot that only goes to the mines.')
