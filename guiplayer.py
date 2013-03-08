@@ -16,7 +16,13 @@ def send_json(socket, obj):
     socket.sendall(json.dumps(obj) + '\n')
 
 def recv_json(socket):
-    data = socket.makefile().readline()
+    if not hasattr(recv_json, 'files'):
+        recv_json.files = {} # static variable
+
+    if not socket in recv_json.files:
+        recv_json.files[socket] = socket.makefile()
+
+    data = recv_json.files[socket].readline()
     return json.loads(data.strip())
 
 def run(host, port, username):
