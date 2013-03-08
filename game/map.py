@@ -30,7 +30,7 @@ class Mine(Building):
 class Map():
     def __init__(self, map_file=None, size=None):
         if map_file:
-            lines = open(map_file).readlines()
+            lines = [line.strip() for line in open(map_file).readlines()]
             map_width = len(lines[0])
             assert all(len(line) == map_width for line in lines)
             map_height = len(lines)

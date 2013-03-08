@@ -97,6 +97,7 @@ class Server():
                     assert recv_json(socket) == True
 
         # end of game
+        print('%s won.' % self.players[self.game.winner()].name)
         for socket, _ in self.players.values():
             socket.close()
         for socket in self.observers:

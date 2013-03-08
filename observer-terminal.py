@@ -24,7 +24,7 @@ class Observer:
 
     def run(self):
         curses.wrapper(self._run)
-        print('Victoire de %s' % self.players[str(self.game.winner())])
+        print('%s won.' % self.players[str(self.game.winner())])
 
     def _run(self, screen):
         self.screen = screen
@@ -43,7 +43,7 @@ class Observer:
 
         screen.erase()
         self.status_pad = curses.newpad(1, 100)
-        self.map_pad = curses.newpad(map_size[1], map_size[0])
+        self.map_pad = curses.newpad(map_size[1]+1, map_size[0]+1)
 
         while not self.game.winner():
             # waiting for player
