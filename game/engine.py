@@ -74,6 +74,7 @@ class Game():
 
                 assert square_from, 'invalid field : from'
                 assert square_from.team == team, 'you cannot move an ennemy'
+                assert action['from'] != action['to'], 'invalid move'
                 assert Point(action['to'][0], action['to'][1]) in self.map.range(action['from'], UNIT_RANGE), 'invalid field : to'
                 assert square_from not in units_moved, 'this unit has already moved'
 
